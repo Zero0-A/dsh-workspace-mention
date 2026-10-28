@@ -1,0 +1,6 @@
+# dsh-workspace-mention —— 输入框 @ 引用工作区（浏览器插件）
+# 由 profile 的 dsh.profile.bundles 收录本包后，本 patch 把自己的 Loader 条目
+# 插进组合；浏览器半体由这一行装配并注册到输入触发管线。
+- insert:
+    - id: workspace-mention
+      name: dsh-workspace-mention

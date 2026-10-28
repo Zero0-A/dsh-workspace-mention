@@ -1,0 +1,6 @@
+{
+  "meta": {
+    "title": "Workspace Mentions",
+    "description": "Type @ in the composer to list every workspace and insert a reference to its root folder."
+  }
+}
