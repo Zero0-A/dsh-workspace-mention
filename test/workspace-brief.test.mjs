@@ -54,6 +54,7 @@ test('extractMentionTokens reads bare and quoted mentions', () => {
     './rel',
   ])
   assert.deepEqual(extractMentionTokens('邮箱 a@b.com 不是 mention'), [])
+  assert.deepEqual(extractMentionTokens('引用标记：@D:/proj/'), ['D:/proj/'])
   assert.deepEqual(extractMentionTokens('没有 mention'), [])
 })
 
