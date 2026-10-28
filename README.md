@@ -43,14 +43,20 @@
 
 ## 安装
 
-本仓库是一个 bundle 包：
+已发布到 npm：
+
+```
+dsh plugin --profile <profile> add dsh-workspace-mention
+```
+
+也可以直接从源码目录安装（本仓库本身就是一个 bundle 包）：
 
 ```
 dsh plugin --profile <profile> add <本目录绝对路径>
 ```
 
-或让插件管理器把这个目录作为 bundle 安装（`plugin_manager` 的 `install_bundle`，target 传本目录）。
-安装后刷新一次 Web 页面，浏览器半体才会重新装配；**宿主半体是 JS 模块，被替换后需要重启 `dsh web` / Desktop 应用才会加载新代码**。
+或让插件管理器把目录作为 bundle 安装（`plugin_manager` 的 `install_bundle`，target 传本目录）。
+安装后刷新一次 Web 页面，浏览器半体才会重新装配；**宿主半体是 JS 模块，被替换后需要重启 `dsh web` / Desktop 应用才会加载新代码**（开发时用插件管理器关/开一次 bundle 也能触发重新组合热加载）。
 
 ## 开发
 

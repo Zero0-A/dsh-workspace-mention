@@ -1,7 +1,6 @@
 {
   "name": "dsh-workspace-mention",
   "version": "0.1.0",
-  "private": true,
   "description": "在 DSH Web 输入框里用 @ 引用任意工作区：列出侧栏里的每个工作区，选中后插入它的根目录引用。",
   "type": "module",
   "main": "./lib/index.js",
@@ -46,5 +45,18 @@
     "mention",
     "workspace"
   ],
-  "license": "MIT"
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Zero0-A/dsh-workspace-mention.git"
+  },
+  "homepage": "https://github.com/Zero0-A/dsh-workspace-mention#readme",
+  "bugs": {
+    "url": "https://github.com/Zero0-A/dsh-workspace-mention/issues"
+  },
+  "author": "Zero0-A",
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  }
 }
