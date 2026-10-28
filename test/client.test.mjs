@@ -203,8 +203,18 @@ test('malformed picks and missing workspace projection yield no candidates', asy
   assert.equal(broken.sources[0].onPick({ candidate: { value: JSON.stringify({ title: 'no path' }) } }), undefined)
 })
 
-test('host half exports an empty apply', async () => {
+test('host half registers an agent/pre-step listener without DSH imports', async () => {
   const host = await import('../lib/index.js')
   assert.equal(typeof host.apply, 'function')
-  assert.equal(host.apply(), undefined)
+  const listeners = []
+  const ctx = {
+    on(name, handler, options) {
+      listeners.push({ name, handler, options })
+      return () => {}
+    },
+  }
+  host.apply(ctx)
+  assert.equal(listeners.length, 1)
+  assert.equal(listeners[0].name, 'agent/pre-step')
+  assert.deepEqual(listeners[0].options, { prepend: true })
 })

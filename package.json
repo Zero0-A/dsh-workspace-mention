@@ -37,7 +37,7 @@
     "node": ">=20"
   },
   "scripts": {
-    "test": "node --test test/client.test.mjs"
+    "test": "node --test test/client.test.mjs test/workspace-brief.test.mjs"
   },
   "keywords": [
     "dsh",

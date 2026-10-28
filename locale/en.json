@@ -1,6 +1,6 @@
 {
   "meta": {
     "title": "Workspace Mentions",
-    "description": "Type @ in the composer to list every workspace and insert a reference to its root folder."
+    "description": "Type @ in the composer to list every workspace; a pick inserts its root path and attaches a bounded workspace snapshot (tree, manifest, README, git) before the model call."
   }
 }
