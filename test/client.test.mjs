@@ -99,7 +99,7 @@ test('registers one @ source', () => {
   assert.equal(sources[0].showGroupTitle, false)
 })
 
-test('lists every workspace with a folder icon and a section heading', () => {
+test('lists every workspace with a folder icon and a section heading', async () => {
   const items = [
     { workspaceId: 'a', path: 'D:\\dshquick', title: 'dshquick' },
     { workspaceId: 'b', path: 'E:/project/实验 项目', title: '实验项目' },
@@ -110,7 +110,7 @@ test('lists every workspace with a folder icon and a section heading', () => {
     sessions: makeSessions({ s1: { cwd: 'D:\\dshquick' } }),
   })
   plugin.apply(context)
-  const rows = sources[0].candidates({ sessionId: 's1' }, { query: '', quoted: false })
+  const rows = await sources[0].candidates({ sessionId: 's1' }, { query: '', quoted: false })
   assert.equal(rows.length, 2)
   assert.equal(rows[0].name, 'dshquick')
   assert.equal(rows[0].icon, 'folder')
@@ -120,7 +120,7 @@ test('lists every workspace with a folder icon and a section heading', () => {
   assert.equal(rows[1].description, 'E:/project/实验 项目')
 })
 
-test('filters candidates by title or path, case-insensitively', () => {
+test('filters candidates by title or path, case-insensitively', async () => {
   const items = [
     { workspaceId: 'a', path: 'D:\\dshquick', title: 'dshquick' },
     { workspaceId: 'b', path: 'E:\\alpha', title: 'Alpha' },
@@ -132,28 +132,44 @@ test('filters candidates by title or path, case-insensitively', () => {
   })
   plugin.apply(context)
   const source = sources[0]
-  assert.deepEqual(source.candidates({ sessionId: 's1' }, { query: 'alp' }).map((row) => row.name), ['Alpha'])
-  assert.deepEqual(source.candidates({ sessionId: 's1' }, { query: 'dshq' }).map((row) => row.name), ['dshquick'])
-  assert.deepEqual(source.candidates({ sessionId: 's1' }, { query: 'nothing' }), [])
+  assert.deepEqual((await source.candidates({ sessionId: 's1' }, { query: 'alp' })).map((row) => row.name), ['Alpha'])
+  assert.deepEqual((await source.candidates({ sessionId: 's1' }, { query: 'dshq' })).map((row) => row.name), ['dshquick'])
+  assert.deepEqual(await source.candidates({ sessionId: 's1' }, { query: 'nothing' }), [])
 })
 
-test('skips workspace candidates for a quoted file query', () => {
+test('the group alias query 工作区 / workspace matches every workspace', async () => {
+  const items = [
+    { workspaceId: 'a', path: 'D:\\dshquick', title: 'dshquick' },
+    { workspaceId: 'b', path: 'E:\\alpha', title: 'Alpha' },
+  ]
+  const plugin = definition.factory(() => {})
+  const { context, sources } = makeContext({
+    workspaces: makeWorkspaces(items),
+    sessions: makeSessions({}),
+  })
+  plugin.apply(context)
+  const source = sources[0]
+  assert.equal((await source.candidates({ sessionId: 's1' }, { query: '工作区' })).length, 2)
+  assert.equal((await source.candidates({ sessionId: 's1' }, { query: 'workspace' })).length, 2)
+})
+
+test('skips workspace candidates for a quoted file query', async () => {
   const plugin = definition.factory(() => {})
   const { context, sources } = makeContext({
     workspaces: makeWorkspaces([{ workspaceId: 'a', path: 'D:\\dshquick', title: 'dshquick' }]),
   })
   plugin.apply(context)
-  assert.deepEqual(sources[0].candidates({ sessionId: 's1' }, { query: 'dsh', quoted: true }), [])
+  assert.deepEqual(await sources[0].candidates({ sessionId: 's1' }, { query: 'dsh', quoted: true }), [])
 })
 
-test('picks insert an absolute folder reference closed with a trailing slash', () => {
+test('picks insert an absolute folder reference closed with a trailing slash', async () => {
   const plugin = definition.factory(() => {})
   const { context, sources } = makeContext({
     workspaces: makeWorkspaces([{ workspaceId: 'a', path: 'D:\\dshquick', title: 'dshquick' }]),
   })
   plugin.apply(context)
   const source = sources[0]
-  const [row] = source.candidates({ sessionId: 's1' }, { query: '' })
+  const [row] = await source.candidates({ sessionId: 's1' }, { query: '' })
   assert.deepEqual(source.onPick({ candidate: row, action: 'pick' }), {
     insert: {
       source: 'reference',
@@ -165,24 +181,24 @@ test('picks insert an absolute folder reference closed with a trailing slash', (
   })
 })
 
-test('picks quote paths that contain whitespace', () => {
+test('picks quote paths that contain whitespace', async () => {
   const plugin = definition.factory(() => {})
   const { context, sources } = makeContext({
     workspaces: makeWorkspaces([{ workspaceId: 'a', path: 'E:/项目 一', title: '项目一' }]),
   })
   plugin.apply(context)
   const source = sources[0]
-  const [row] = source.candidates({ sessionId: 's1' }, { query: '' })
+  const [row] = await source.candidates({ sessionId: 's1' }, { query: '' })
   const picked = source.onPick({ candidate: row })
   assert.equal(picked.insert.ref, '@"E:/项目 一/"')
   assert.equal(picked.insert.label, '项目一/')
 })
 
-test('malformed picks and missing workspace projection yield no candidates', () => {
+test('malformed picks and missing workspace projection yield no candidates', async () => {
   const plugin = definition.factory(() => {})
   const broken = makeContext({ workspaces: undefined })
   plugin.apply(broken.context)
-  assert.deepEqual(broken.sources[0].candidates({ sessionId: 's1' }, { query: '' }), [])
+  assert.deepEqual(await broken.sources[0].candidates({ sessionId: 's1' }, { query: '' }), [])
   assert.equal(broken.sources[0].onPick({ candidate: { value: 'not json' } }), undefined)
   assert.equal(broken.sources[0].onPick({ candidate: { value: JSON.stringify({ title: 'no path' }) } }), undefined)
 })
